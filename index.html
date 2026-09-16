@@ -571,7 +571,7 @@
     const typeEl = document.getElementById('new-type');
     const email = input.value.trim().toLowerCase();
     if (!email || !email.includes('@')) return;
-    const type = typeEl.value || 'intern';
+    const type = typeEl.options[typeEl.selectedIndex].value;
     await setDoc(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() });
     input.value = '';
     showFeedback(`✅ Added ${email} as ${type === 'ncg' ? 'NCG' : 'Intern'}`);
@@ -579,20 +579,27 @@
 
   window.bulkImport = async () => {
     const raw = document.getElementById('bulk-emails').value;
-    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.includes('@'));
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
     const toAdd = [];
     lines.forEach(line => {
       let type = 'intern';
       let email = line.toLowerCase();
-      if (email.startsWith('ncg:')) { type = 'ncg'; email = email.slice(4).trim(); }
-      if (!guests[email]) toAdd.push({ email, type });
+      if (email.startsWith('ncg:')) {
+        type = 'ncg';
+        email = email.slice(4).trim();
+      }
+      if (email.includes('@') && !guests[email]) {
+        toAdd.push({ email, type });
+      }
     });
     if (!toAdd.length) { showFeedback('No new emails to import.'); return; }
     const batch = writeBatch(db);
     toAdd.forEach(({ email, type }) => batch.set(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() }));
     await batch.commit();
     document.getElementById('bulk-emails').value = '';
-    showFeedback(`✅ Imported ${toAdd.length} email${toAdd.length !== 1 ? 's' : ''}`);
+    const internCount = toAdd.filter(e => e.type === 'intern').length;
+    const ncgCount = toAdd.filter(e => e.type === 'ncg').length;
+    showFeedback(`✅ Imported ${internCount} Intern${internCount !== 1 ? 's' : ''} and ${ncgCount} NCG${ncgCount !== 1 ? 's' : ''}`);
   };
 
   window.removeGuest = async (email) => { await deleteDoc(doc(db, 'guests', email)); };
