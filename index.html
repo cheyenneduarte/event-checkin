@@ -29,35 +29,23 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-    /* Layout */
     .page { max-width: 720px; margin: 0 auto; padding: 0 16px 60px; }
-
-    /* Tab bar */
     .tab-bar { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; }
     .tab { padding: 14px 22px; font-size: 14px; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color 0.15s; display: flex; align-items: center; gap: 6px; }
     .tab.active { color: var(--nv-green-dark); border-bottom-color: var(--nv-green); font-weight: 500; }
     .tab:hover:not(.active) { color: var(--text); }
-
-    /* Brand */
     .brand-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
     .brand-square { width: 38px; height: 38px; background: var(--nv-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .brand-square span { color: white; font-size: 13px; font-weight: 700; letter-spacing: -0.5px; }
     .brand-name { font-size: 16px; font-weight: 600; color: var(--text); }
-
-    /* Cards */
-    .card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 28px; margin-top: 20px; }
-
-    /* Form elements */
     label { font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px; }
-    input[type=text], input[type=email], input[type=password], textarea {
+    input[type=text], input[type=email], input[type=password], textarea, select {
       width: 100%; padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius);
       font-size: 15px; font-family: inherit; color: var(--text); background: var(--surface);
       outline: none; transition: border-color 0.15s;
     }
-    input:focus, textarea:focus { border-color: var(--nv-green); box-shadow: 0 0 0 3px rgba(118,185,0,0.12); }
+    input:focus, textarea:focus, select:focus { border-color: var(--nv-green); box-shadow: 0 0 0 3px rgba(118,185,0,0.12); }
     textarea { resize: vertical; min-height: 90px; font-size: 13px; font-family: monospace; }
-
     .btn { padding: 9px 16px; border-radius: var(--radius); font-size: 14px; font-family: inherit; font-weight: 500; cursor: pointer; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); transition: background 0.15s; display: inline-flex; align-items: center; gap: 6px; }
     .btn:hover { background: var(--surface-alt); }
     .btn-primary { background: var(--nv-green); color: white; border-color: var(--nv-green); }
@@ -65,117 +53,108 @@
     .btn-full { width: 100%; justify-content: center; padding: 12px; font-size: 15px; }
     .btn-danger { color: var(--danger); border-color: #fecaca; }
     .btn-danger:hover { background: var(--danger-bg); }
-
-    /* Result cards */
     .result { padding: 16px; border-radius: 10px; margin-top: 20px; border: 1px solid; display: flex; gap: 12px; align-items: flex-start; }
     .result.approved { background: var(--nv-green-light); border-color: var(--nv-green-muted); }
     .result.denied { background: var(--danger-bg); border-color: var(--danger-border); }
     .result.already { background: var(--warning-bg); border-color: var(--warning-border); }
-    .result-icon { font-size: 22px; margin-top: 1px; flex-shrink: 0; }
-    .result.approved .result-icon { color: var(--nv-green-dark); }
-    .result.denied .result-icon { color: var(--danger); }
-    .result.already .result-icon { color: var(--warning-text); }
+    .result-icon { font-size: 24px; flex-shrink: 0; }
     .result-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
     .result.approved .result-title { color: var(--nv-green-dark); }
     .result.denied .result-title { color: var(--danger); }
     .result.already .result-title { color: var(--warning-text); }
-    .result-sub { font-size: 13px; color: var(--text-secondary); }
-
-    /* Error */
+    .result-sub { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
     .err { font-size: 13px; color: var(--danger); margin-top: 6px; display: none; }
-
-    /* Stats */
     .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 24px; }
     .stat { background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
     .stat-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
     .stat-val { font-size: 26px; font-weight: 600; }
     .stat-val.green { color: var(--nv-green-dark); }
     .stat-val.red { color: var(--danger); }
-
-    /* Section label */
     .section-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
-
-    /* Divider */
     .divider { height: 1px; background: var(--border); margin: 24px 0; }
-
-    /* Table */
     .table-wrap { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
     th { text-align: left; padding: 10px 14px; background: var(--surface-alt); color: var(--text-secondary); font-weight: 500; font-size: 12px; border-bottom: 1px solid var(--border); }
     td { padding: 10px 14px; border-bottom: 1px solid var(--border); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     tr:last-child td { border-bottom: none; }
     tr:hover td { background: #fafafa; }
-
-    /* Badges */
     .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 600; }
     .badge.in { background: var(--nv-green-light); color: var(--nv-green-dark); }
     .badge.denied { background: var(--danger-bg); color: var(--danger); }
     .badge.pending { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
-
-    /* Filter / search row */
+    .badge.intern { background: #ede9fe; color: #6d28d9; }
+    .badge.ncg { background: #dbeafe; color: #1d4ed8; }
     .filter-row { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
     .filter-btn { padding: 5px 13px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); font-size: 12px; cursor: pointer; color: var(--text-secondary); font-family: inherit; }
     .filter-btn.active { background: var(--nv-green-light); border-color: var(--nv-green); color: var(--nv-green-dark); font-weight: 500; }
     .search-input { flex: 1; min-width: 160px; padding: 6px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius); font-size: 13px; font-family: inherit; outline: none; }
     .search-input:focus { border-color: var(--nv-green); }
-
-    /* Admin header */
     .admin-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
     .admin-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* Row inputs */
     .row-inputs { display: flex; gap: 8px; }
-    .row-inputs input { flex: 1; }
-
-    /* Inline remove */
+    .row-inputs input, .row-inputs select { flex: 1; }
     .remove-btn { padding: 2px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: transparent; font-size: 12px; cursor: pointer; color: var(--danger); font-family: inherit; }
     .remove-btn:hover { background: var(--danger-bg); }
-
-    /* Empty state */
     .empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
-
-    /* Password wrap */
     .pw-wrap { position: relative; }
     .pw-wrap input { padding-right: 44px; }
     .pw-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 18px; padding: 0; }
     .pw-toggle:hover { color: var(--text); }
-
-    /* Modal */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; align-items: center; justify-content: center; }
     .overlay.open { display: flex; }
-    .modal { background: var(--surface); border-radius: 14px; padding: 24px; width: 340px; max-width: 92vw; border: 1px solid var(--border); }
+    .modal { background: var(--surface); border-radius: 14px; padding: 24px; width: 360px; max-width: 92vw; border: 1px solid var(--border); }
     .modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
     .modal p { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
     .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
-
-    /* Toasts */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 8px; font-size: 14px; opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 200; white-space: nowrap; }
     .toast.show { opacity: 1; }
-
-    /* Sync indicator */
     .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; display: inline-block; margin-left: 6px; transition: background 0.3s; }
     .sync-dot.ok { background: var(--nv-green); }
     .sync-dot.err { background: var(--danger); }
-
-    /* Spinner */
     .spinner { display: inline-block; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; animation: spin 0.6s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
     .pw-view { max-width: 400px; margin: 40px auto 0; }
-    .checkin-view { max-width: 460px; margin: 20px auto 0; }
+    .checkin-view { max-width: 500px; margin: 20px auto 0; }
     .admin-view { margin-top: 20px; }
     .feedback { font-size: 13px; color: var(--nv-green-dark); min-height: 20px; text-align: right; margin-top: 6px; }
+
+    /* Photo release */
+    .photo-release-box { margin-top: 20px; background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; }
+    .photo-release-box .pr-title { font-size: 14px; font-weight: 600; color: #1e40af; margin-bottom: 8px; }
+    .photo-release-box .pr-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 14px; }
+    .toggle-row { display: flex; align-items: center; gap: 12px; }
+    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; cursor: pointer; transition: 0.2s; }
+    .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .toggle-slider { background: var(--nv-green); }
+    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
+    .toggle-label { font-size: 13px; font-weight: 500; color: var(--text); }
+
+    /* Tally cards */
+    .tally-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .tally-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .tally-card-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+    .tally-card-title.intern { color: #6d28d9; }
+    .tally-card-title.ncg { color: #1d4ed8; }
+    .tally-nums { display: flex; gap: 12px; }
+    .tally-num { text-align: center; }
+    .tally-num-val { font-size: 22px; font-weight: 700; }
+    .tally-num-val.green { color: var(--nv-green-dark); }
+    .tally-num-label { font-size: 11px; color: var(--text-muted); }
+
+    /* UR team message */
+    .ur-team-box { margin-top: 14px; background: #fff7ed; border: 1px solid #fed7aa; border-radius: 10px; padding: 14px 16px; display: flex; gap: 10px; align-items: flex-start; }
+    .ur-team-box .ur-icon { font-size: 20px; flex-shrink: 0; }
+    .ur-team-box .ur-text { font-size: 13px; color: #92400e; font-weight: 500; line-height: 1.5; }
   </style>
 </head>
 <body>
 
 <div class="tab-bar">
-  <div class="tab active" id="tab-attendee" onclick="switchTab('attendee')">
-    <i class="ti ti-qrcode"></i> Attendee check-in
-  </div>
+  <div class="tab active" id="tab-attendee" onclick="switchTab('attendee')">🎟️ Check-in</div>
   <div class="tab" id="tab-admin" onclick="switchTab('admin')">
-    <i class="ti ti-lock"></i> Admin
-    <span class="sync-dot" id="sync-dot" title="Firebase connection"></span>
+    🛡️ Admin <span class="sync-dot" id="sync-dot"></span>
   </div>
 </div>
 
@@ -185,13 +164,32 @@
     <div class="brand-square"><span>NV</span></div>
     <span class="brand-name">University Recruiting</span>
   </div>
-  <div style="font-size:26px; font-weight:600; margin-bottom:6px;" id="event-title-display">Event Check-in</div>
+  <div style="font-size:26px; font-weight:700; margin-bottom:6px;" id="event-title-display">Event Check-in 🎉</div>
   <div style="font-size:15px; color:var(--text-secondary); margin-bottom:28px;" id="event-sub-display">Enter your NVIDIA email to verify your access.</div>
-  <label for="attendee-email">NVIDIA email address</label>
-  <input type="email" id="attendee-email" placeholder="yourname@nvidia.com" oninput="clearResult()" onkeydown="if(event.key==='Enter')checkIn()" />
-  <div class="err" id="email-error"></div>
-  <button class="btn btn-primary btn-full" style="margin-top:14px;" onclick="checkIn()" id="checkin-btn">Check in</button>
+
+  <div id="step-email">
+    <label for="attendee-email">📧 NVIDIA email address</label>
+    <input type="email" id="attendee-email" placeholder="yourname@nvidia.com" oninput="clearResult()" onkeydown="if(event.key==='Enter')checkIn()" />
+    <div class="err" id="email-error"></div>
+    <button class="btn btn-primary btn-full" style="margin-top:14px;" onclick="checkIn()" id="checkin-btn">Check in ✅</button>
+  </div>
+
   <div id="checkin-result" style="display:none"></div>
+
+  <!-- Photo release (shown after approved) -->
+  <div id="photo-release-section" style="display:none">
+    <div class="photo-release-box">
+      <div class="pr-title">📸 Photo & Video Release</div>
+      <div class="pr-text">I consent to being photographed and video/audio recorded by NVIDIA and its affiliates ("NVIDIA"), and/or by NVIDIA's partners, sponsors, exhibitors, and vendors (collectively with NVIDIA, "NVIDIA affiliates") at this event. I also consent to NVIDIA's use, reproduction, public performance, and public display of any and all such photographs, videos/audios for marketing purposes.</div>
+      <div class="toggle-row">
+        <label class="toggle">
+          <input type="checkbox" id="photo-toggle" onchange="savePhotoRelease()" />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label" id="photo-toggle-label">I do not consent</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PASSWORD GATE -->
@@ -200,14 +198,12 @@
     <div class="brand-square"><span>NV</span></div>
     <span class="brand-name">University Recruiting</span>
   </div>
-  <div style="font-size:24px; font-weight:600; margin-bottom:6px;">Admin access</div>
+  <div style="font-size:24px; font-weight:600; margin-bottom:6px;">🔐 Admin access</div>
   <div style="font-size:14px; color:var(--text-secondary); margin-bottom:24px;">Enter the admin password to continue.</div>
   <label for="pw-input">Password</label>
   <div class="pw-wrap">
     <input type="password" id="pw-input" placeholder="Enter password" onkeydown="if(event.key==='Enter')submitPassword()" />
-    <button class="pw-toggle" onclick="togglePw('pw-input','pw-eye')" aria-label="Toggle password visibility">
-      <i class="ti ti-eye" id="pw-eye"></i>
-    </button>
+    <button class="pw-toggle" onclick="togglePw('pw-input','pw-eye')"><i class="ti ti-eye" id="pw-eye"></i></button>
   </div>
   <div class="err" id="pw-error">Incorrect password. Try again.</div>
   <button class="btn btn-primary btn-full" style="margin-top:14px;" onclick="submitPassword()">Unlock admin panel</button>
@@ -220,25 +216,52 @@
 <div id="view-admin" class="page admin-view" style="display:none">
   <div class="admin-header">
     <div>
-      <div style="font-size:20px; font-weight:600;">Event admin</div>
+      <div style="font-size:20px; font-weight:600;">📋 Event admin</div>
       <div style="font-size:13px; color:var(--text-secondary); margin-top:3px;" id="event-name-small"></div>
     </div>
     <div class="admin-actions">
-      <button class="btn" onclick="exportCSV()"><i class="ti ti-download"></i> Export</button>
-      <button class="btn" onclick="promptClearCheckins()"><i class="ti ti-refresh"></i> Reset check-ins</button>
-      <button class="btn" onclick="promptChangePw()"><i class="ti ti-key"></i> Change password</button>
-      <button class="btn btn-danger" onclick="promptClearAll()"><i class="ti ti-trash"></i> Clear all</button>
-      <button class="btn" onclick="lockAdmin()"><i class="ti ti-lock"></i> Lock</button>
+      <button class="btn" onclick="exportCSV()">⬇️ Export</button>
+      <button class="btn" onclick="promptClearCheckins()">🔄 Reset check-ins</button>
+      <button class="btn" onclick="promptChangePw()">🔑 Change password</button>
+      <button class="btn btn-danger" onclick="promptClearAll()">🗑️ Clear all</button>
+      <button class="btn" onclick="lockAdmin()">🔒 Lock</button>
     </div>
   </div>
 
+  <!-- Overall stats -->
+  <div class="section-label">Overall stats</div>
   <div class="stats" id="stats-row">
-    <div class="stat"><div class="stat-label">Guest list</div><div class="stat-val" id="stat-total">—</div></div>
-    <div class="stat"><div class="stat-label">Checked in</div><div class="stat-val green" id="stat-in">—</div></div>
-    <div class="stat"><div class="stat-label">Remaining</div><div class="stat-val" id="stat-rem">—</div></div>
-    <div class="stat"><div class="stat-label">Denied</div><div class="stat-val red" id="stat-denied">—</div></div>
+    <div class="stat"><div class="stat-label">Total guests</div><div class="stat-val" id="stat-total">—</div></div>
+    <div class="stat"><div class="stat-label">Checked in ✅</div><div class="stat-val green" id="stat-in">—</div></div>
+    <div class="stat"><div class="stat-label">Remaining ⏳</div><div class="stat-val" id="stat-rem">—</div></div>
+    <div class="stat"><div class="stat-label">Denied ❌</div><div class="stat-val red" id="stat-denied">—</div></div>
+    <div class="stat"><div class="stat-label">📸 Photo consent</div><div class="stat-val green" id="stat-photo">—</div></div>
   </div>
 
+  <!-- Intern / NCG tallies -->
+  <div class="section-label">Check-in by type</div>
+  <div class="tally-row">
+    <div class="tally-card">
+      <div class="tally-card-title intern">🎓 Intern</div>
+      <div class="tally-nums">
+        <div class="tally-num"><div class="tally-num-val green" id="tally-intern-in">0</div><div class="tally-num-label">Checked in</div></div>
+        <div class="tally-num"><div class="tally-num-val" id="tally-intern-total">0</div><div class="tally-num-label">Total</div></div>
+        <div class="tally-num"><div class="tally-num-val" id="tally-intern-rem">0</div><div class="tally-num-label">Remaining</div></div>
+      </div>
+    </div>
+    <div class="tally-card">
+      <div class="tally-card-title ncg">🆕 NCG</div>
+      <div class="tally-nums">
+        <div class="tally-num"><div class="tally-num-val green" id="tally-ncg-in">0</div><div class="tally-num-label">Checked in</div></div>
+        <div class="tally-num"><div class="tally-num-val" id="tally-ncg-total">0</div><div class="tally-num-label">Total</div></div>
+        <div class="tally-num"><div class="tally-num-val" id="tally-ncg-rem">0</div><div class="tally-num-label">Remaining</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Event settings -->
   <div class="section-label">Event settings</div>
   <div class="row-inputs" style="margin-bottom:6px;">
     <input type="text" id="event-title-input" placeholder="Event name" oninput="saveSettings()" />
@@ -247,14 +270,19 @@
 
   <div class="divider"></div>
 
+  <!-- Add guests -->
   <div class="section-label">Add to guest list</div>
   <div class="row-inputs" style="margin-bottom:16px;">
     <input type="email" id="new-email" placeholder="email@nvidia.com" onkeydown="if(event.key==='Enter')addSingleEmail()" />
+    <select id="new-type" style="max-width:120px;">
+      <option value="intern">🎓 Intern</option>
+      <option value="ncg">🆕 NCG</option>
+    </select>
     <button class="btn btn-primary" onclick="addSingleEmail()">Add</button>
   </div>
 
-  <div class="section-label" style="margin-bottom:6px;">Bulk import (one email per line)</div>
-  <textarea id="bulk-emails" placeholder="alice@nvidia.com&#10;bob@nvidia.com&#10;carol@nvidia.com"></textarea>
+  <div class="section-label" style="margin-bottom:6px;">Bulk import — paste emails, one per line (defaults to Intern; prefix with "ncg:" for NCG)</div>
+  <textarea id="bulk-emails" placeholder="alice@nvidia.com&#10;ncg:bob@nvidia.com&#10;carol@nvidia.com"></textarea>
   <div style="display:flex; justify-content:flex-end; margin-top:8px;">
     <button class="btn btn-primary" onclick="bulkImport()">Import list</button>
   </div>
@@ -262,25 +290,30 @@
 
   <div class="divider"></div>
 
-  <div class="section-label">Guest list and check-ins</div>
+  <!-- Guest table -->
+  <div class="section-label">Guest list & check-ins</div>
   <div class="filter-row">
-    <input class="search-input" id="search-input" placeholder="Search emails…" oninput="renderTable()" />
+    <input class="search-input" id="search-input" placeholder="🔍 Search emails…" oninput="renderTable()" />
     <button class="filter-btn active" id="filter-all" onclick="setFilter('all')">All</button>
-    <button class="filter-btn" id="filter-in" onclick="setFilter('in')">Checked in</button>
-    <button class="filter-btn" id="filter-pending" onclick="setFilter('pending')">Pending</button>
-    <button class="filter-btn" id="filter-denied" onclick="setFilter('denied')">Denied</button>
+    <button class="filter-btn" id="filter-in" onclick="setFilter('in')">✅ Checked in</button>
+    <button class="filter-btn" id="filter-pending" onclick="setFilter('pending')">⏳ Pending</button>
+    <button class="filter-btn" id="filter-denied" onclick="setFilter('denied')">❌ Denied</button>
+    <button class="filter-btn" id="filter-intern" onclick="setFilter('intern')">🎓 Intern</button>
+    <button class="filter-btn" id="filter-ncg" onclick="setFilter('ncg')">🆕 NCG</button>
   </div>
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
-          <th style="width:46%">Email</th>
-          <th style="width:24%">Status</th>
-          <th style="width:18%">Time</th>
-          <th style="width:12%"></th>
+          <th style="width:38%">Email</th>
+          <th style="width:12%">Type</th>
+          <th style="width:18%">Status</th>
+          <th style="width:14%">Time</th>
+          <th style="width:10%">📸</th>
+          <th style="width:8%"></th>
         </tr>
       </thead>
-      <tbody id="guest-tbody"><tr><td colspan="4"><div class="empty">Loading…</div></td></tr></tbody>
+      <tbody id="guest-tbody"><tr><td colspan="6"><div class="empty">Loading…</div></td></tr></tbody>
     </table>
   </div>
 </div>
@@ -300,10 +333,9 @@
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, getDocs, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import { getFirestore, doc, setDoc, onSnapshot, collection, getDocs, writeBatch, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAEAPDB8YxfoB4cLUkSEcvnna4-a0T7gzo",
@@ -316,46 +348,37 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
-
   const syncDot = document.getElementById('sync-dot');
 
-  // --- State ---
   let guests = {};
   let checkins = {};
-  let settings = { title: 'Event Check-in', sub: 'Enter your NVIDIA email to verify your access.', password: 'NVIDIAUR26' };
+  let settings = { title: 'Event Check-in 🎉', sub: 'Enter your NVIDIA email to verify your access.', password: 'NVIDIAUR26' };
   let currentFilter = 'all';
   let adminUnlocked = false;
   let pendingModalAction = null;
+  let lastCheckedInEmail = null;
 
-  // --- Firebase refs ---
   const settingsRef = doc(db, 'event', 'settings');
   const guestsCol = collection(db, 'guests');
   const checkinsCol = collection(db, 'checkins');
 
-  // --- Live listeners ---
   onSnapshot(settingsRef, snap => {
-    if (snap.exists()) {
-      settings = { ...settings, ...snap.data() };
-      applySettings();
-    }
+    if (snap.exists()) { settings = { ...settings, ...snap.data() }; applySettings(); }
     syncDot.className = 'sync-dot ok';
   }, () => { syncDot.className = 'sync-dot err'; });
 
   onSnapshot(guestsCol, snap => {
     guests = {};
-    snap.forEach(d => { guests[d.id] = true; });
-    renderStats();
-    renderTable();
+    snap.forEach(d => { guests[d.id] = d.data(); });
+    renderStats(); renderTable();
   });
 
   onSnapshot(checkinsCol, snap => {
     checkins = {};
     snap.forEach(d => { checkins[d.id] = d.data(); });
-    renderStats();
-    renderTable();
+    renderStats(); renderTable();
   });
 
-  // --- Settings ---
   function applySettings() {
     document.getElementById('event-title-display').textContent = settings.title;
     document.getElementById('event-sub-display').textContent = settings.sub;
@@ -370,29 +393,22 @@
   window.saveSettings = () => {
     clearTimeout(settingsTimer);
     settingsTimer = setTimeout(async () => {
-      settings.title = document.getElementById('event-title-input').value || 'Event Check-in';
+      settings.title = document.getElementById('event-title-input').value || 'Event Check-in 🎉';
       settings.sub = document.getElementById('event-sub-input').value || '';
       applySettings();
       await setDoc(settingsRef, settings, { merge: true });
     }, 600);
   };
 
-  // --- Auth ---
   window.switchTab = (tab) => {
     document.getElementById('tab-attendee').classList.toggle('active', tab === 'attendee');
     document.getElementById('tab-admin').classList.toggle('active', tab === 'admin');
-    document.getElementById('view-attendee').style.display = 'none';
-    document.getElementById('view-pw').style.display = 'none';
-    document.getElementById('view-admin').style.display = 'none';
+    ['view-attendee','view-pw','view-admin'].forEach(id => document.getElementById(id).style.display = 'none');
     if (tab === 'attendee') {
       document.getElementById('view-attendee').style.display = '';
     } else {
-      if (adminUnlocked) {
-        document.getElementById('view-admin').style.display = '';
-      } else {
-        document.getElementById('view-pw').style.display = '';
-        setTimeout(() => document.getElementById('pw-input').focus(), 50);
-      }
+      if (adminUnlocked) { document.getElementById('view-admin').style.display = ''; }
+      else { document.getElementById('view-pw').style.display = ''; setTimeout(() => document.getElementById('pw-input').focus(), 50); }
     }
   };
 
@@ -409,10 +425,7 @@
     }
   };
 
-  window.lockAdmin = () => {
-    adminUnlocked = false;
-    switchTab('attendee');
-  };
+  window.lockAdmin = () => { adminUnlocked = false; switchTab('attendee'); };
 
   window.togglePw = (inputId, iconId) => {
     const input = document.getElementById(inputId);
@@ -421,18 +434,18 @@
     else { input.type = 'password'; icon.className = 'ti ti-eye'; }
   };
 
-  // --- Check-in ---
   window.clearResult = () => {
     document.getElementById('checkin-result').style.display = 'none';
     document.getElementById('email-error').style.display = 'none';
+    document.getElementById('photo-release-section').style.display = 'none';
   };
 
   window.checkIn = async () => {
     const email = document.getElementById('attendee-email').value.trim().toLowerCase();
     const errEl = document.getElementById('email-error');
     const btn = document.getElementById('checkin-btn');
-    if (!email) { errEl.textContent = 'Enter your email address.'; errEl.style.display = 'block'; return; }
-    if (!email.includes('@')) { errEl.textContent = 'Enter a valid email address.'; errEl.style.display = 'block'; return; }
+    if (!email) { errEl.textContent = 'Please enter your email address.'; errEl.style.display = 'block'; return; }
+    if (!email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
     errEl.style.display = 'none';
 
     btn.innerHTML = '<span class="spinner"></span>';
@@ -440,55 +453,103 @@
 
     const resultEl = document.getElementById('checkin-result');
     const existing = checkins[email];
+    const isNvidiaEmail = email.endsWith('@nvidia.com');
 
     if (existing && existing.approved) {
-      resultEl.innerHTML = `<div class="result already"><div class="result-icon"><i class="ti ti-info-circle"></i></div><div><div class="result-title">Already checked in</div><div class="result-sub">You've already been admitted. Welcome!</div></div></div>`;
+      resultEl.innerHTML = `<div class="result already"><div class="result-icon">👋</div><div><div class="result-title">Already checked in!</div><div class="result-sub">You've already been admitted. Welcome to the event!</div></div></div>`;
+      resultEl.style.display = 'block';
+      document.getElementById('photo-release-section').style.display = '';
+      document.getElementById('photo-toggle').checked = existing.photoRelease || false;
+      updatePhotoLabel(existing.photoRelease || false);
     } else if (guests[email]) {
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      await setDoc(doc(db, 'checkins', email), { email, approved: true, time: ts, timestamp: new Date().toISOString() });
-      resultEl.innerHTML = `<div class="result approved"><div class="result-icon"><i class="ti ti-circle-check"></i></div><div><div class="result-title">Access approved</div><div class="result-sub">Welcome! You're on the guest list. Check-in time: ${ts}</div></div></div>`;
+      const guestType = guests[email].type || 'intern';
+      await setDoc(doc(db, 'checkins', email), { email, approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, type: guestType });
+      lastCheckedInEmail = email;
+      resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🎉</div><div><div class="result-title">Welcome! Access approved ✅</div><div class="result-sub">You're on the guest list as a <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts}</div></div></div>`;
+      resultEl.style.display = 'block';
+      document.getElementById('photo-release-section').style.display = '';
+      document.getElementById('photo-toggle').checked = false;
+      updatePhotoLabel(false);
     } else {
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      await setDoc(doc(db, 'checkins', email), { email, approved: false, time: ts, timestamp: new Date().toISOString() });
-      resultEl.innerHTML = `<div class="result denied"><div class="result-icon"><i class="ti ti-circle-x"></i></div><div><div class="result-title">Not on guest list</div><div class="result-sub">This email isn't registered for this event. Contact the organizer if you believe this is an error.</div></div></div>`;
+      await setDoc(doc(db, 'checkins', email), { email, approved: false, time: ts, timestamp: new Date().toISOString(), photoRelease: false });
+      lastCheckedInEmail = null;
+
+      let deniedHTML = '';
+      if (isNvidiaEmail) {
+        // NVIDIA email but not on list — show UR team message
+        deniedHTML = `<div class="result denied"><div class="result-icon">❌</div><div><div class="result-title">Not on the guest list</div><div class="result-sub">Your email isn't registered for this event.</div></div></div>
+        <div class="ur-team-box"><div class="ur-icon">👋</div><div class="ur-text">Please see a member of the UR team.</div></div>`;
+      } else {
+        // Non-NVIDIA email — prompt to use NVIDIA email
+        deniedHTML = `<div class="result denied"><div class="result-icon">📧</div><div><div class="result-title">Please use your NVIDIA email</div><div class="result-sub">Make sure you're entering your <strong>@nvidia.com</strong> email address to check in.</div></div></div>`;
+      }
+      resultEl.innerHTML = deniedHTML;
+      resultEl.style.display = 'block';
+      document.getElementById('photo-release-section').style.display = 'none';
     }
 
-    resultEl.style.display = 'block';
     document.getElementById('attendee-email').value = '';
-    btn.innerHTML = 'Check in';
+    btn.innerHTML = 'Check in ✅';
     btn.disabled = false;
   };
 
-  // --- Guest management ---
+  function updatePhotoLabel(consented) {
+    document.getElementById('photo-toggle-label').textContent = consented ? '✅ I consent' : 'I do not consent';
+  }
+
+  window.savePhotoRelease = async () => {
+    const consented = document.getElementById('photo-toggle').checked;
+    updatePhotoLabel(consented);
+    const email = lastCheckedInEmail || (checkins && Object.values(checkins).find(c => c.approved))?.email;
+    // Find the most recently checked in email by looking at the result card
+    const resultEl = document.getElementById('checkin-result');
+    if (!resultEl) return;
+    // We track lastCheckedInEmail for new check-ins; for "already checked in" we need their email
+    const inputVal = document.getElementById('attendee-email').value.trim().toLowerCase();
+    const targetEmail = lastCheckedInEmail;
+    if (targetEmail && checkins[targetEmail]) {
+      await setDoc(doc(db, 'checkins', targetEmail), { photoRelease: consented }, { merge: true });
+    }
+  };
+
   window.addSingleEmail = async () => {
     const input = document.getElementById('new-email');
+    const typeEl = document.getElementById('new-type');
     const email = input.value.trim().toLowerCase();
     if (!email || !email.includes('@')) return;
-    await setDoc(doc(db, 'guests', email), { email, addedAt: new Date().toISOString() });
+    const type = typeEl.value || 'intern';
+    await setDoc(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() });
     input.value = '';
-    showFeedback(`Added ${email}`);
+    showFeedback(`✅ Added ${email} as ${type === 'ncg' ? 'NCG' : 'Intern'}`);
   };
 
   window.bulkImport = async () => {
     const raw = document.getElementById('bulk-emails').value;
-    const emails = raw.split('\n').map(e => e.trim().toLowerCase()).filter(e => e.includes('@') && !guests[e]);
-    if (!emails.length) { showFeedback('No new emails to import.'); return; }
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.includes('@'));
+    const toAdd = [];
+    lines.forEach(line => {
+      let type = 'intern';
+      let email = line.toLowerCase();
+      if (email.startsWith('ncg:')) { type = 'ncg'; email = email.slice(4).trim(); }
+      if (!guests[email]) toAdd.push({ email, type });
+    });
+    if (!toAdd.length) { showFeedback('No new emails to import.'); return; }
     const batch = writeBatch(db);
-    emails.forEach(e => batch.set(doc(db, 'guests', e), { email: e, addedAt: new Date().toISOString() }));
+    toAdd.forEach(({ email, type }) => batch.set(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() }));
     await batch.commit();
     document.getElementById('bulk-emails').value = '';
-    showFeedback(`Imported ${emails.length} email${emails.length !== 1 ? 's' : ''}`);
+    showFeedback(`✅ Imported ${toAdd.length} email${toAdd.length !== 1 ? 's' : ''}`);
   };
 
-  window.removeGuest = async (email) => {
-    await deleteDoc(doc(db, 'guests', email));
-  };
+  window.removeGuest = async (email) => { await deleteDoc(doc(db, 'guests', email)); };
 
-  // --- Table ---
   window.setFilter = (f) => {
     currentFilter = f;
-    ['all','in','pending','denied'].forEach(id => {
-      document.getElementById('filter-' + id).classList.toggle('active', id === f);
+    ['all','in','pending','denied','intern','ncg'].forEach(id => {
+      const el = document.getElementById('filter-' + id);
+      if (el) el.classList.toggle('active', id === f);
     });
     renderTable();
   };
@@ -498,118 +559,106 @@
     const checkedIn = Object.values(checkins).filter(c => c.approved).length;
     const denied = Object.values(checkins).filter(c => !c.approved).length;
     const remaining = Math.max(0, total - checkedIn);
+    const photoConsent = Object.values(checkins).filter(c => c.approved && c.photoRelease).length;
+
     document.getElementById('stat-total').textContent = total;
     document.getElementById('stat-in').textContent = checkedIn;
     document.getElementById('stat-rem').textContent = remaining;
     document.getElementById('stat-denied').textContent = denied;
+    document.getElementById('stat-photo').textContent = photoConsent;
+
+    // Tally by type
+    const internGuests = Object.values(guests).filter(g => (g.type || 'intern') === 'intern');
+    const ncgGuests = Object.values(guests).filter(g => g.type === 'ncg');
+    const internIn = internGuests.filter(g => checkins[g.email] && checkins[g.email].approved).length;
+    const ncgIn = ncgGuests.filter(g => checkins[g.email] && checkins[g.email].approved).length;
+
+    document.getElementById('tally-intern-total').textContent = internGuests.length;
+    document.getElementById('tally-intern-in').textContent = internIn;
+    document.getElementById('tally-intern-rem').textContent = Math.max(0, internGuests.length - internIn);
+    document.getElementById('tally-ncg-total').textContent = ncgGuests.length;
+    document.getElementById('tally-ncg-in').textContent = ncgIn;
+    document.getElementById('tally-ncg-rem').textContent = Math.max(0, ncgGuests.length - ncgIn);
   }
 
   function renderTable() {
     const search = (document.getElementById('search-input')?.value || '').toLowerCase();
     let rows = [];
-
     Object.keys(guests).forEach(email => {
       const c = checkins[email];
       const status = c ? (c.approved ? 'in' : 'denied') : 'pending';
-      rows.push({ email, status, time: c?.time || '', canRemove: true });
+      const type = guests[email].type || 'intern';
+      rows.push({ email, status, time: c?.time || '', canRemove: true, photoRelease: c?.photoRelease || false, type });
     });
-
     Object.values(checkins).filter(c => !c.approved && !guests[c.email]).forEach(c => {
-      if (!rows.find(r => r.email === c.email)) {
-        rows.push({ email: c.email, status: 'denied', time: c.time || '', canRemove: false });
-      }
+      if (!rows.find(r => r.email === c.email))
+        rows.push({ email: c.email, status: 'denied', time: c.time || '', canRemove: false, photoRelease: false, type: '—' });
     });
-
     rows = rows.filter(r => {
       if (search && !r.email.includes(search)) return false;
       if (currentFilter === 'in') return r.status === 'in';
       if (currentFilter === 'pending') return r.status === 'pending';
       if (currentFilter === 'denied') return r.status === 'denied';
+      if (currentFilter === 'intern') return r.type === 'intern';
+      if (currentFilter === 'ncg') return r.type === 'ncg';
       return true;
     });
 
     const tbody = document.getElementById('guest-tbody');
     if (!tbody) return;
-
-    if (!rows.length) {
-      tbody.innerHTML = `<tr><td colspan="4"><div class="empty">No entries found</div></td></tr>`;
-      return;
-    }
+    if (!rows.length) { tbody.innerHTML = `<tr><td colspan="6"><div class="empty">No entries found</div></td></tr>`; return; }
 
     const badge = (s) => {
-      if (s === 'in') return `<span class="badge in"><i class="ti ti-check" style="font-size:10px"></i> Checked in</span>`;
-      if (s === 'denied') return `<span class="badge denied"><i class="ti ti-x" style="font-size:10px"></i> Denied</span>`;
-      return `<span class="badge pending">Pending</span>`;
+      if (s === 'in') return `<span class="badge in">✅ Checked in</span>`;
+      if (s === 'denied') return `<span class="badge denied">❌ Denied</span>`;
+      return `<span class="badge pending">⏳ Pending</span>`;
+    };
+    const typeBadge = (t) => {
+      if (t === 'ncg') return `<span class="badge ncg">🆕 NCG</span>`;
+      if (t === 'intern') return `<span class="badge intern">🎓 Intern</span>`;
+      return `<span style="color:var(--text-muted); font-size:12px;">—</span>`;
     };
 
     tbody.innerHTML = rows.map(r => `
       <tr>
         <td style="font-family:monospace; font-size:12px;">${r.email}</td>
+        <td>${typeBadge(r.type)}</td>
         <td>${badge(r.status)}</td>
         <td style="color:var(--text-secondary); font-size:12px;">${r.time || '—'}</td>
+        <td style="text-align:center;">${r.photoRelease ? '📸 ✅' : '—'}</td>
         <td>${r.canRemove ? `<button class="remove-btn" onclick="removeGuest('${r.email}')">Remove</button>` : ''}</td>
       </tr>`).join('');
   }
 
-  // --- Export ---
   window.exportCSV = () => {
-    let csv = 'Email,Status,Check-in Time\n';
+    let csv = 'Email,Type,Status,Check-in Time,Photo Release\n';
     Object.keys(guests).forEach(email => {
       const c = checkins[email];
       const status = c ? (c.approved ? 'Checked In' : 'Denied') : 'Pending';
-      csv += `${email},${status},${c?.time || ''}\n`;
+      const type = guests[email].type || 'intern';
+      csv += `${email},${type},${status},${c?.time || ''},${c?.photoRelease ? 'Yes' : 'No'}\n`;
     });
     Object.values(checkins).filter(c => !c.approved && !guests[c.email]).forEach(c => {
-      csv += `${c.email},Denied (not on list),${c.time || ''}\n`;
+      csv += `${c.email},unknown,Denied (not on list),${c.time || ''},No\n`;
     });
     const blob = new Blob([csv], { type: 'text/csv' });
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'event-checkins.csv';
-    a.click();
+    a.href = URL.createObjectURL(blob); a.download = 'event-checkins.csv'; a.click();
   };
 
-  // --- Modals ---
-  window.promptClearCheckins = () => openModal(
-    'Reset check-ins?',
-    'This clears all check-in records but keeps the guest list intact.',
-    null,
-    async () => {
-      const snap = await getDocs(checkinsCol);
-      const batch = writeBatch(db);
-      snap.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-      toast('Check-ins cleared.');
-    }
-  );
+  window.promptClearCheckins = () => openModal('🔄 Reset check-ins?', 'This clears all check-in records but keeps the guest list intact.', null,
+    async () => { const snap = await getDocs(checkinsCol); const batch = writeBatch(db); snap.forEach(d => batch.delete(d.ref)); await batch.commit(); toast('✅ Check-ins cleared.'); });
 
-  window.promptClearAll = () => openModal(
-    'Clear everything?',
-    'This removes all guests and all check-in records. This cannot be undone.',
-    null,
-    async () => {
-      const [gs, cs] = await Promise.all([getDocs(guestsCol), getDocs(checkinsCol)]);
-      const batch = writeBatch(db);
-      gs.forEach(d => batch.delete(d.ref));
-      cs.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-      toast('Everything cleared.');
-    }
-  );
+  window.promptClearAll = () => openModal('🗑️ Clear everything?', 'This removes all guests and all check-in records. This cannot be undone.', null,
+    async () => { const [gs, cs] = await Promise.all([getDocs(guestsCol), getDocs(checkinsCol)]); const batch = writeBatch(db); gs.forEach(d => batch.delete(d.ref)); cs.forEach(d => batch.delete(d.ref)); await batch.commit(); toast('✅ Everything cleared.'); });
 
-  window.promptChangePw = () => openModal(
-    'Change password',
-    'Enter your current password, then set a new one.',
-    `<div style="margin-bottom:10px;">
-       <label>Current password</label>
-       <div class="pw-wrap"><input type="password" id="m-cur" placeholder="Current password" />
-       <button class="pw-toggle" onclick="togglePw('m-cur','m-cur-eye')"><i class="ti ti-eye" id="m-cur-eye"></i></button></div>
-     </div>
-     <div>
-       <label>New password</label>
-       <div class="pw-wrap"><input type="password" id="m-new" placeholder="New password" />
-       <button class="pw-toggle" onclick="togglePw('m-new','m-new-eye')"><i class="ti ti-eye" id="m-new-eye"></i></button></div>
-     </div>
+  window.promptChangePw = () => openModal('🔑 Change password', 'Enter your current password, then set a new one.',
+    `<div style="margin-bottom:10px;"><label>Current password</label>
+     <div class="pw-wrap"><input type="password" id="m-cur" placeholder="Current password" />
+     <button class="pw-toggle" onclick="togglePw('m-cur','m-cur-eye')"><i class="ti ti-eye" id="m-cur-eye"></i></button></div></div>
+     <div><label>New password</label>
+     <div class="pw-wrap"><input type="password" id="m-new" placeholder="New password" />
+     <button class="pw-toggle" onclick="togglePw('m-new','m-new-eye')"><i class="ti ti-eye" id="m-new-eye"></i></button></div></div>
      <div class="err" id="m-err" style="margin-top:8px;"></div>`,
     async () => {
       const cur = document.getElementById('m-cur').value;
@@ -619,9 +668,8 @@
       if (!nw || nw.length < 4) { errEl.textContent = 'New password must be at least 4 characters.'; errEl.style.display = 'block'; return false; }
       settings.password = nw;
       await setDoc(settingsRef, { password: nw }, { merge: true });
-      toast('Password updated.');
-    }
-  );
+      toast('✅ Password updated.');
+    });
 
   function openModal(title, body, fields, action) {
     document.getElementById('modal-title').textContent = title;
@@ -630,23 +678,12 @@
     document.getElementById('modal-overlay').classList.add('open');
     pendingModalAction = action;
   }
+  window.closeModal = () => { document.getElementById('modal-overlay').classList.remove('open'); pendingModalAction = null; };
+  window.modalOk = async () => { if (!pendingModalAction) return; const result = await pendingModalAction(); if (result !== false) closeModal(); };
 
-  window.closeModal = () => {
-    document.getElementById('modal-overlay').classList.remove('open');
-    pendingModalAction = null;
-  };
-
-  window.modalOk = async () => {
-    if (!pendingModalAction) return;
-    const result = await pendingModalAction();
-    if (result !== false) closeModal();
-  };
-
-  // --- Toast ---
   function toast(msg) {
     const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.classList.add('show');
+    el.textContent = msg; el.classList.add('show');
     setTimeout(() => el.classList.remove('show'), 2500);
   }
   window.toast = toast;
