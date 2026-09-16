@@ -119,17 +119,19 @@
     .feedback { font-size: 13px; color: var(--nv-green-dark); min-height: 20px; text-align: right; margin-top: 6px; }
 
     /* Photo release */
-    .photo-release-box { margin-top: 20px; background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 16px; }
-    .photo-release-box .pr-title { font-size: 14px; font-weight: 600; color: #1e40af; margin-bottom: 8px; }
-    .photo-release-box .pr-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 14px; }
-    .toggle-row { display: flex; align-items: center; gap: 12px; }
-    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; inset: 0; background: #ccc; border-radius: 24px; cursor: pointer; transition: 0.2s; }
-    .toggle-slider:before { content: ''; position: absolute; width: 18px; height: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
-    .toggle input:checked + .toggle-slider { background: var(--nv-green); }
-    .toggle input:checked + .toggle-slider:before { transform: translateX(20px); }
-    .toggle-label { font-size: 13px; font-weight: 500; color: var(--text); }
+    .photo-release-box { margin-top: 20px; background: #f0f7ff; border: 2px solid #bfdbfe; border-radius: 12px; padding: 20px; }
+    .photo-release-box .pr-title { font-size: 15px; font-weight: 700; color: #1e40af; margin-bottom: 8px; }
+    .photo-release-box .pr-text { font-size: 12px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 16px; }
+    .pr-required { font-size: 12px; font-weight: 600; color: var(--danger); margin-bottom: 12px; }
+    .pr-btn-row { display: flex; gap: 10px; }
+    .pr-btn { flex: 1; padding: 12px; border-radius: var(--radius); font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; border: 2px solid var(--border); background: var(--surface); color: var(--text); transition: all 0.15s; }
+    .pr-btn:hover { border-color: var(--border-strong); background: var(--surface-alt); }
+    .pr-btn.selected-yes { background: var(--nv-green-light); border-color: var(--nv-green); color: var(--nv-green-dark); }
+    .pr-btn.selected-no { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
+    .pr-pending-note { margin-top: 14px; font-size: 13px; color: #1e40af; font-weight: 500; text-align: center; }
+    .pr-complete-banner { margin-top: 14px; padding: 10px 14px; border-radius: var(--radius); font-size: 13px; font-weight: 600; text-align: center; display: none; }
+    .pr-complete-banner.yes { background: var(--nv-green-light); color: var(--nv-green-dark); }
+    .pr-complete-banner.no { background: var(--danger-bg); color: var(--danger); }
 
     /* Tally cards */
     .tally-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
@@ -174,20 +176,30 @@
     <button class="btn btn-primary btn-full" style="margin-top:14px;" onclick="checkIn()" id="checkin-btn">Check in ✅</button>
   </div>
 
+  <!-- Pending message shown while NCG hasn't answered photo release -->
+  <div id="checkin-pending" style="display:none; margin-top:20px;">
+    <div class="result already">
+      <div class="result-icon">⏳</div>
+      <div>
+        <div class="result-title" style="color:var(--warning-text);">One more step!</div>
+        <div class="result-sub">Please answer the photo & video release question below to complete your check-in.</div>
+      </div>
+    </div>
+  </div>
+
   <div id="checkin-result" style="display:none"></div>
 
-  <!-- Photo release (shown after approved) -->
+  <!-- Photo release (NCG only, mandatory) -->
   <div id="photo-release-section" style="display:none">
     <div class="photo-release-box">
       <div class="pr-title">📸 Photo & Video Release</div>
       <div class="pr-text">I consent to being photographed and video/audio recorded by NVIDIA and its affiliates ("NVIDIA"), and/or by NVIDIA's partners, sponsors, exhibitors, and vendors (collectively with NVIDIA, "NVIDIA affiliates") at this event. I also consent to NVIDIA's use, reproduction, public performance, and public display of any and all such photographs, videos/audios for marketing purposes.</div>
-      <div class="toggle-row">
-        <label class="toggle">
-          <input type="checkbox" id="photo-toggle" onchange="savePhotoRelease()" />
-          <span class="toggle-slider"></span>
-        </label>
-        <span class="toggle-label" id="photo-toggle-label">I do not consent</span>
+      <div class="pr-required">⚠️ Required — please select one to complete check-in</div>
+      <div class="pr-btn-row">
+        <button class="pr-btn" id="pr-yes-btn" onclick="selectPhotoRelease(true)">✅ I consent</button>
+        <button class="pr-btn" id="pr-no-btn" onclick="selectPhotoRelease(false)">❌ I do not consent</button>
       </div>
+      <div class="pr-complete-banner" id="pr-complete-banner"></div>
     </div>
   </div>
 </div>
@@ -436,8 +448,12 @@
 
   window.clearResult = () => {
     document.getElementById('checkin-result').style.display = 'none';
+    document.getElementById('checkin-pending').style.display = 'none';
     document.getElementById('email-error').style.display = 'none';
     document.getElementById('photo-release-section').style.display = 'none';
+    document.getElementById('pr-yes-btn').classList.remove('selected-yes');
+    document.getElementById('pr-no-btn').classList.remove('selected-no');
+    document.getElementById('pr-complete-banner').style.display = 'none';
   };
 
   window.checkIn = async () => {
@@ -456,21 +472,43 @@
     const isNvidiaEmail = email.endsWith('@nvidia.com');
 
     if (existing && existing.approved) {
-      resultEl.innerHTML = `<div class="result already"><div class="result-icon">👋</div><div><div class="result-title">Already checked in!</div><div class="result-sub">You've already been admitted. Welcome to the event!</div></div></div>`;
-      resultEl.style.display = 'block';
-      document.getElementById('photo-release-section').style.display = '';
-      document.getElementById('photo-toggle').checked = existing.photoRelease || false;
-      updatePhotoLabel(existing.photoRelease || false);
+      const guestType = existing.type || guests[email]?.type || 'intern';
+      const isNCG = guestType === 'ncg';
+      if (isNCG && existing.photoReleaseAnswered) {
+        // Already answered photo release — show full success
+        showSuccessResult(email, guestType, existing.time, existing.photoRelease);
+        showPhotoReleaseAnswered(existing.photoRelease);
+      } else if (isNCG) {
+        // NCG but hasn't answered photo release yet
+        lastCheckedInEmail = email;
+        document.getElementById('checkin-pending').style.display = 'block';
+        document.getElementById('photo-release-section').style.display = '';
+        document.getElementById('pr-yes-btn').classList.remove('selected-yes');
+        document.getElementById('pr-no-btn').classList.remove('selected-no');
+        document.getElementById('pr-complete-banner').style.display = 'none';
+      } else {
+        // Intern — already checked in, just show welcome
+        resultEl.innerHTML = `<div class="result already"><div class="result-icon">👋</div><div><div class="result-title">Already checked in!</div><div class="result-sub">You've already been admitted. Welcome to the event!</div></div></div>`;
+        resultEl.style.display = 'block';
+      }
     } else if (guests[email]) {
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const guestType = guests[email].type || 'intern';
-      await setDoc(doc(db, 'checkins', email), { email, approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, type: guestType });
+      const isNCG = guestType === 'ncg';
+      await setDoc(doc(db, 'checkins', email), { email, approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, photoReleaseAnswered: false, type: guestType });
       lastCheckedInEmail = email;
-      resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🎉</div><div><div class="result-title">Welcome! Access approved ✅</div><div class="result-sub">You're on the guest list as a <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts}</div></div></div>`;
-      resultEl.style.display = 'block';
-      document.getElementById('photo-release-section').style.display = '';
-      document.getElementById('photo-toggle').checked = false;
-      updatePhotoLabel(false);
+      if (isNCG) {
+        // NCG — show pending, require photo release answer first
+        document.getElementById('checkin-pending').style.display = 'block';
+        document.getElementById('photo-release-section').style.display = '';
+        document.getElementById('pr-yes-btn').classList.remove('selected-yes');
+        document.getElementById('pr-no-btn').classList.remove('selected-no');
+        document.getElementById('pr-complete-banner').style.display = 'none';
+      } else {
+        // Intern — show success immediately, no photo release
+        showSuccessResult(email, guestType, ts, false);
+        document.getElementById('photo-release-section').style.display = 'none';
+      }
     } else {
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       await setDoc(doc(db, 'checkins', email), { email, approved: false, time: ts, timestamp: new Date().toISOString(), photoRelease: false });
@@ -495,23 +533,37 @@
     btn.disabled = false;
   };
 
-  function updatePhotoLabel(consented) {
-    document.getElementById('photo-toggle-label').textContent = consented ? '✅ I consent' : 'I do not consent';
+  function showSuccessResult(email, guestType, ts, photoRelease) {
+    const resultEl = document.getElementById('checkin-result');
+    resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🎉</div><div><div class="result-title">Welcome! Access approved ✅</div><div class="result-sub">You're on the guest list as a <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts}</div></div></div>`;
+    resultEl.style.display = 'block';
+    document.getElementById('checkin-pending').style.display = 'none';
   }
 
-  window.savePhotoRelease = async () => {
-    const consented = document.getElementById('photo-toggle').checked;
-    updatePhotoLabel(consented);
-    const email = lastCheckedInEmail || (checkins && Object.values(checkins).find(c => c.approved))?.email;
-    // Find the most recently checked in email by looking at the result card
-    const resultEl = document.getElementById('checkin-result');
-    if (!resultEl) return;
-    // We track lastCheckedInEmail for new check-ins; for "already checked in" we need their email
-    const inputVal = document.getElementById('attendee-email').value.trim().toLowerCase();
-    const targetEmail = lastCheckedInEmail;
-    if (targetEmail && checkins[targetEmail]) {
-      await setDoc(doc(db, 'checkins', targetEmail), { photoRelease: consented }, { merge: true });
+  function showPhotoReleaseAnswered(consented) {
+    document.getElementById('pr-yes-btn').classList.toggle('selected-yes', consented);
+    document.getElementById('pr-no-btn').classList.toggle('selected-no', !consented);
+    const banner = document.getElementById('pr-complete-banner');
+    banner.textContent = consented ? '✅ Thank you! Consent recorded.' : '✅ Response recorded. Thank you!';
+    banner.className = `pr-complete-banner ${consented ? 'yes' : 'no'}`;
+    banner.style.display = 'block';
+  }
+
+  window.selectPhotoRelease = async (consented) => {
+    if (!lastCheckedInEmail) return;
+    // Save to Firebase
+    await setDoc(doc(db, 'checkins', lastCheckedInEmail), { photoRelease: consented, photoReleaseAnswered: true }, { merge: true });
+    // Update local state immediately for UI
+    if (checkins[lastCheckedInEmail]) {
+      checkins[lastCheckedInEmail].photoRelease = consented;
+      checkins[lastCheckedInEmail].photoReleaseAnswered = true;
     }
+    // Show success result now that they've answered
+    const c = checkins[lastCheckedInEmail];
+    const guestType = c?.type || guests[lastCheckedInEmail]?.type || 'ncg';
+    showSuccessResult(lastCheckedInEmail, guestType, c?.time || '', consented);
+    showPhotoReleaseAnswered(consented);
+    document.getElementById('photo-release-section').style.display = '';
   };
 
   window.addSingleEmail = async () => {
