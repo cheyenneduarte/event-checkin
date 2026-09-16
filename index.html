@@ -293,8 +293,15 @@
     <button class="btn btn-primary" onclick="addSingleEmail()">Add</button>
   </div>
 
-  <div class="section-label" style="margin-bottom:6px;">Bulk import — paste emails, one per line (defaults to Intern; prefix with "ncg:" for NCG)</div>
-  <textarea id="bulk-emails" placeholder="alice@nvidia.com&#10;ncg:bob@nvidia.com&#10;carol@nvidia.com"></textarea>
+  <div class="section-label" style="margin-bottom:6px;">Bulk import — paste emails, one per line</div>
+  <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+    <label style="margin:0; white-space:nowrap; font-size:13px;">Import as:</label>
+    <select id="bulk-type" style="width:auto; padding:6px 12px; font-size:13px;">
+      <option value="intern">🎓 Intern</option>
+      <option value="ncg">🆕 NCG</option>
+    </select>
+  </div>
+  <textarea id="bulk-emails" placeholder="alice@nvidia.com&#10;bob@nvidia.com&#10;carol@nvidia.com"></textarea>
   <div style="display:flex; justify-content:flex-end; margin-top:8px;">
     <button class="btn btn-primary" onclick="bulkImport()">Import list</button>
   </div>
@@ -579,27 +586,16 @@
 
   window.bulkImport = async () => {
     const raw = document.getElementById('bulk-emails').value;
-    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-    const toAdd = [];
-    lines.forEach(line => {
-      let type = 'intern';
-      let email = line.toLowerCase();
-      if (email.startsWith('ncg:')) {
-        type = 'ncg';
-        email = email.slice(4).trim();
-      }
-      if (email.includes('@') && !guests[email]) {
-        toAdd.push({ email, type });
-      }
-    });
+    const bulkTypeEl = document.getElementById('bulk-type');
+    const type = bulkTypeEl.options[bulkTypeEl.selectedIndex].value;
+    const lines = raw.split('\n').map(l => l.trim().toLowerCase()).filter(l => l.includes('@'));
+    const toAdd = lines.filter(email => !guests[email]).map(email => ({ email, type }));
     if (!toAdd.length) { showFeedback('No new emails to import.'); return; }
     const batch = writeBatch(db);
     toAdd.forEach(({ email, type }) => batch.set(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() }));
     await batch.commit();
     document.getElementById('bulk-emails').value = '';
-    const internCount = toAdd.filter(e => e.type === 'intern').length;
-    const ncgCount = toAdd.filter(e => e.type === 'ncg').length;
-    showFeedback(`✅ Imported ${internCount} Intern${internCount !== 1 ? 's' : ''} and ${ncgCount} NCG${ncgCount !== 1 ? 's' : ''}`);
+    showFeedback(`✅ Imported ${toAdd.length} ${type === 'ncg' ? 'NCG' : 'Intern'}${toAdd.length !== 1 ? 's' : ''}`);
   };
 
   window.removeGuest = async (email) => { await deleteDoc(doc(db, 'guests', email)); };
