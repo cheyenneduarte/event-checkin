@@ -95,8 +95,9 @@
     .row-inputs input, .row-inputs select { flex: 1; }
     .remove-btn { padding: 2px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: transparent; font-size: 12px; cursor: pointer; color: var(--danger); font-family: inherit; }
     .remove-btn:hover { background: var(--danger-bg); }
-    .approve-btn { padding: 2px 8px; border: 1px solid var(--nv-green); border-radius: var(--radius); background: var(--nv-green-light); font-size: 12px; cursor: pointer; color: var(--nv-green-dark); font-family: inherit; font-weight: 600; }
+    .approve-btn { padding: 2px 8px; border: 1px solid var(--nv-green); border-radius: var(--radius); background: var(--nv-green-light); font-size: 12px; cursor: pointer; color: var(--nv-green-dark); font-family: inherit; font-weight: 600; white-space: nowrap; }
     .approve-btn:hover { background: var(--nv-green); color: white; }
+    .remove-btn { white-space: nowrap; }
     .empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
     .pw-wrap { position: relative; }
     .pw-wrap input { padding-right: 44px; }
@@ -341,12 +342,12 @@
     <table>
       <thead>
         <tr>
-          <th style="width:38%">Email</th>
-          <th style="width:12%">Type</th>
-          <th style="width:18%">Status</th>
-          <th style="width:14%">Time</th>
-          <th style="width:10%">📸</th>
-          <th style="width:8%"></th>
+          <th style="width:32%">Email</th>
+          <th style="width:11%">Type</th>
+          <th style="width:16%">Status</th>
+          <th style="width:12%">Time</th>
+          <th style="width:8%">📸</th>
+          <th style="width:21%"></th>
         </tr>
       </thead>
       <tbody id="guest-tbody"><tr><td colspan="6"><div class="empty">Loading…</div></td></tr></tbody>
