@@ -603,7 +603,7 @@
 
   function showSuccessResult(email, guestType, ts, photoRelease) {
     const resultEl = document.getElementById('checkin-result');
-    resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🥳</div><div><div class="result-title">Welcome! Access approved 🚀</div><div class="result-sub">You're on the guest list as a <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts} 💚</div></div></div>`;
+    resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🥳</div><div><div class="result-title">Welcome! Access approved 🚀</div><div class="result-sub">You're on the guest list as an <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts} 💚</div></div></div>`;
     resultEl.style.display = 'block';
     document.getElementById('checkin-pending').style.display = 'none';
     document.getElementById('keep-open-note').style.display = 'none';
@@ -641,7 +641,7 @@
     const type = typeEl.options[typeEl.selectedIndex].value;
     await setDoc(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() });
     input.value = '';
-    showFeedback(`✅ Added ${email} as ${type === 'ncg' ? 'NCG' : 'Intern'}`);
+    showFeedback(`✅ Added ${email} as an ${type === 'ncg' ? 'NCG' : 'Intern'}`);
   };
 
   window.bulkImport = async () => {
@@ -666,7 +666,7 @@
       // Already on guest list with a known type — approve directly
       await setDoc(doc(db, 'guests', email), { email, type: existingType, addedAt: new Date().toISOString() });
       await setDoc(doc(db, 'checkins', email), { approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, photoReleaseAnswered: false, type: existingType }, { merge: true });
-      toast(`✅ Approved ${email} as ${existingType === 'ncg' ? 'NCG' : 'Intern'}`);
+      toast(`✅ Approved ${email} as an ${existingType === 'ncg' ? 'NCG' : 'Intern'}`);
     } else {
       // Not on guest list — ask for type first
       openModal(
@@ -684,7 +684,7 @@
           const type = typeEl.options[typeEl.selectedIndex].value;
           await setDoc(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() });
           await setDoc(doc(db, 'checkins', email), { approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, photoReleaseAnswered: false, type }, { merge: true });
-          toast(`✅ Approved ${email} as ${type === 'ncg' ? 'NCG' : 'Intern'}`);
+          toast(`✅ Approved ${email} as an ${type === 'ncg' ? 'NCG' : 'Intern'}`);
         }
       );
     }
