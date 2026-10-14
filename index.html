@@ -118,6 +118,20 @@
     .admin-view { margin-top: 20px; }
     .feedback { font-size: 13px; color: var(--nv-green-dark); min-height: 20px; text-align: right; margin-top: 6px; }
 
+    /* Full screen color states */
+    body.screen-approved { background: #76b900 !important; }
+    body.screen-approved .tab-bar { background: #5a8c00; border-color: #4a7500; }
+    body.screen-approved .tab { color: rgba(255,255,255,0.7); }
+    body.screen-approved .tab.active { color: white; border-bottom-color: white; }
+    body.screen-pending { background: #fbbf24 !important; }
+    body.screen-pending .tab-bar { background: #f59e0b; border-color: #d97706; }
+    body.screen-pending .tab { color: rgba(0,0,0,0.6); }
+    body.screen-pending .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
+    body.screen-approved .result, body.screen-pending .result { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+
+    /* Email input error state */
+    input.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(220,38,38,0.12) !important; }
+
     /* Photo release */
     .photo-release-box { margin-top: 20px; background: #f0f7ff; border: 2px solid #bfdbfe; border-radius: 12px; padding: 20px; }
     .photo-release-box .pr-title { font-size: 15px; font-weight: 700; color: #1e40af; margin-bottom: 8px; }
@@ -173,8 +187,9 @@
     <label for="attendee-email">📧 NVIDIA email address</label>
     <input type="email" id="attendee-email" placeholder="yourname@nvidia.com" oninput="clearResult()" onkeydown="if(event.key==='Enter')checkIn()" />
     <div class="err" id="email-error"></div>
-    <button class="btn btn-primary btn-full" style="margin-top:14px;" onclick="checkIn()" id="checkin-btn">Check in ✅</button>
+    <button class="btn btn-primary btn-full" style="margin-top:14px;" onclick="checkIn()" id="checkin-btn">✨ Check in</button>
   </div>
+  <div id="keep-open-note" style="display:none; margin-top:16px; text-align:center; font-size:13px; color:var(--text-secondary);">📱 Please keep this page open.</div>
 
   <!-- Pending message shown while NCG hasn't answered photo release -->
   <div id="checkin-pending" style="display:none; margin-top:20px;">
@@ -426,6 +441,7 @@
     if (tab === 'attendee') {
       document.getElementById('view-attendee').style.display = '';
     } else {
+      setScreenColor('');
       if (adminUnlocked) { document.getElementById('view-admin').style.display = ''; }
       else { document.getElementById('view-pw').style.display = ''; setTimeout(() => document.getElementById('pw-input').focus(), 50); }
     }
@@ -453,49 +469,94 @@
     else { input.type = 'password'; icon.className = 'ti ti-eye'; }
   };
 
+  function setScreenColor(state) {
+    document.body.classList.remove('screen-approved', 'screen-pending');
+    if (state === 'approved') document.body.classList.add('screen-approved');
+    if (state === 'pending') document.body.classList.add('screen-pending');
+  }
+
   window.clearResult = () => {
     document.getElementById('checkin-result').style.display = 'none';
     document.getElementById('checkin-pending').style.display = 'none';
     document.getElementById('email-error').style.display = 'none';
+    document.getElementById('keep-open-note').style.display = 'none';
     document.getElementById('photo-release-section').style.display = 'none';
     document.getElementById('pr-yes-btn').classList.remove('selected-yes');
     document.getElementById('pr-no-btn').classList.remove('selected-no');
     document.getElementById('pr-complete-banner').style.display = 'none';
+    document.getElementById('attendee-email').classList.remove('input-error');
+    setScreenColor('');
   };
 
+  // Auto-approve: watch guests collection and if a denied attendee gets added, update their screen
+  let watchedEmail = null;
+  onSnapshot(guestsCol, snap => {
+    guests = {};
+    snap.forEach(d => { guests[d.id] = d.data(); });
+    renderStats(); renderTable();
+    // If someone is on the denied screen and admin just added them, auto-approve
+    if (watchedEmail && guests[watchedEmail] && checkins[watchedEmail] && !checkins[watchedEmail].approved) {
+      const guestType = guests[watchedEmail].type || 'intern';
+      const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      setDoc(doc(db, 'checkins', watchedEmail), { approved: true, time: ts, timestamp: new Date().toISOString(), photoReleaseAnswered: false, photoRelease: false, type: guestType }, { merge: true }).then(() => {
+        lastCheckedInEmail = watchedEmail;
+        if (guestType === 'ncg') {
+          setScreenColor('pending');
+          document.getElementById('checkin-result').style.display = 'none';
+          document.getElementById('checkin-pending').style.display = 'block';
+          document.getElementById('keep-open-note').style.display = 'none';
+          document.getElementById('photo-release-section').style.display = '';
+        } else {
+          showSuccessResult(watchedEmail, guestType, ts, false);
+          setScreenColor('approved');
+        }
+      });
+    }
+  });
+
   window.checkIn = async () => {
-    const email = document.getElementById('attendee-email').value.trim().toLowerCase();
+    const emailInput = document.getElementById('attendee-email');
+    const email = emailInput.value.trim().toLowerCase();
     const errEl = document.getElementById('email-error');
     const btn = document.getElementById('checkin-btn');
-    if (!email) { errEl.textContent = 'Please enter your email address.'; errEl.style.display = 'block'; return; }
-    if (!email.includes('@')) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; return; }
-    errEl.style.display = 'none';
 
+    if (!email) { errEl.textContent = 'Please enter your email address.'; errEl.style.display = 'block'; emailInput.classList.add('input-error'); return; }
+
+    // Hard block: non-nvidia.com email
+    if (!email.endsWith('@nvidia.com')) {
+      errEl.textContent = '⚠️ That email isn\'t an NVIDIA address. Please use your email ending in @nvidia.com to check in.';
+      errEl.style.display = 'block';
+      emailInput.classList.add('input-error');
+      return;
+    }
+
+    errEl.style.display = 'none';
+    emailInput.classList.remove('input-error');
     btn.innerHTML = '<span class="spinner"></span>';
     btn.disabled = true;
 
     const resultEl = document.getElementById('checkin-result');
     const existing = checkins[email];
-    const isNvidiaEmail = email.endsWith('@nvidia.com');
 
     if (existing && existing.approved) {
       const guestType = existing.type || guests[email]?.type || 'intern';
       const isNCG = guestType === 'ncg';
       if (isNCG && existing.photoReleaseAnswered) {
-        // Already answered photo release — show full success
         showSuccessResult(email, guestType, existing.time, existing.photoRelease);
         showPhotoReleaseAnswered(existing.photoRelease);
+        setScreenColor('approved');
       } else if (isNCG) {
-        // NCG but hasn't answered photo release yet
         lastCheckedInEmail = email;
+        setScreenColor('pending');
         document.getElementById('checkin-pending').style.display = 'block';
+        document.getElementById('keep-open-note').style.display = 'none';
         document.getElementById('photo-release-section').style.display = '';
         document.getElementById('pr-yes-btn').classList.remove('selected-yes');
         document.getElementById('pr-no-btn').classList.remove('selected-no');
         document.getElementById('pr-complete-banner').style.display = 'none';
       } else {
-        // Intern — already checked in, just show welcome
-        resultEl.innerHTML = `<div class="result already"><div class="result-icon">👋</div><div><div class="result-title">Already checked in!</div><div class="result-sub">You've already been admitted. Welcome to the event!</div></div></div>`;
+        setScreenColor('approved');
+        resultEl.innerHTML = `<div class="result already"><div class="result-icon">🥳</div><div><div class="result-title">Already checked in!</div><div class="result-sub">You've already been admitted. Welcome to the event! 🚀</div></div></div>`;
         resultEl.style.display = 'block';
       }
     } else if (guests[email]) {
@@ -504,47 +565,45 @@
       const isNCG = guestType === 'ncg';
       await setDoc(doc(db, 'checkins', email), { email, approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, photoReleaseAnswered: false, type: guestType });
       lastCheckedInEmail = email;
+      watchedEmail = null;
       if (isNCG) {
-        // NCG — show pending, require photo release answer first
+        setScreenColor('pending');
         document.getElementById('checkin-pending').style.display = 'block';
+        document.getElementById('keep-open-note').style.display = 'none';
         document.getElementById('photo-release-section').style.display = '';
         document.getElementById('pr-yes-btn').classList.remove('selected-yes');
         document.getElementById('pr-no-btn').classList.remove('selected-no');
         document.getElementById('pr-complete-banner').style.display = 'none';
       } else {
-        // Intern — show success immediately, no photo release
         showSuccessResult(email, guestType, ts, false);
+        setScreenColor('approved');
         document.getElementById('photo-release-section').style.display = 'none';
       }
     } else {
+      // On guest list? No. Save denial and show message + keep-open note
       const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       await setDoc(doc(db, 'checkins', email), { email, approved: false, time: ts, timestamp: new Date().toISOString(), photoRelease: false });
       lastCheckedInEmail = null;
-
-      let deniedHTML = '';
-      if (isNvidiaEmail) {
-        // NVIDIA email but not on list — show UR team message
-        deniedHTML = `<div class="result denied"><div class="result-icon">❌</div><div><div class="result-title">Not on the guest list</div><div class="result-sub">Your email isn't registered for this event.</div></div></div>
+      watchedEmail = email; // watch for auto-approve
+      setScreenColor('pending');
+      resultEl.innerHTML = `<div class="result denied"><div class="result-icon">😕</div><div><div class="result-title">Not on the guest list</div><div class="result-sub">Your email isn't registered for this event.</div></div></div>
         <div class="ur-team-box"><div class="ur-icon">👋</div><div class="ur-text">Please see a member of the UR team.</div></div>`;
-      } else {
-        // Non-NVIDIA email — prompt to use NVIDIA email
-        deniedHTML = `<div class="result denied"><div class="result-icon">📧</div><div><div class="result-title">Please use your NVIDIA email</div><div class="result-sub">Make sure you're entering your <strong>@nvidia.com</strong> email address to check in.</div></div></div>`;
-      }
-      resultEl.innerHTML = deniedHTML;
       resultEl.style.display = 'block';
+      document.getElementById('keep-open-note').style.display = 'block';
       document.getElementById('photo-release-section').style.display = 'none';
     }
 
     document.getElementById('attendee-email').value = '';
-    btn.innerHTML = 'Check in ✅';
+    btn.innerHTML = '✨ Check in';
     btn.disabled = false;
   };
 
   function showSuccessResult(email, guestType, ts, photoRelease) {
     const resultEl = document.getElementById('checkin-result');
-    resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🎉</div><div><div class="result-title">Welcome! Access approved ✅</div><div class="result-sub">You're on the guest list as a <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts}</div></div></div>`;
+    resultEl.innerHTML = `<div class="result approved"><div class="result-icon">🥳</div><div><div class="result-title">Welcome! Access approved 🚀</div><div class="result-sub">You're on the guest list as a <strong>${guestType === 'ncg' ? 'NCG' : 'Intern'}</strong>. Check-in time: ${ts} 💚</div></div></div>`;
     resultEl.style.display = 'block';
     document.getElementById('checkin-pending').style.display = 'none';
+    document.getElementById('keep-open-note').style.display = 'none';
   }
 
   function showPhotoReleaseAnswered(consented) {
@@ -558,18 +617,16 @@
 
   window.selectPhotoRelease = async (consented) => {
     if (!lastCheckedInEmail) return;
-    // Save to Firebase
     await setDoc(doc(db, 'checkins', lastCheckedInEmail), { photoRelease: consented, photoReleaseAnswered: true }, { merge: true });
-    // Update local state immediately for UI
     if (checkins[lastCheckedInEmail]) {
       checkins[lastCheckedInEmail].photoRelease = consented;
       checkins[lastCheckedInEmail].photoReleaseAnswered = true;
     }
-    // Show success result now that they've answered
     const c = checkins[lastCheckedInEmail];
     const guestType = c?.type || guests[lastCheckedInEmail]?.type || 'ncg';
     showSuccessResult(lastCheckedInEmail, guestType, c?.time || '', consented);
     showPhotoReleaseAnswered(consented);
+    setScreenColor('approved');
     document.getElementById('photo-release-section').style.display = '';
   };
 
