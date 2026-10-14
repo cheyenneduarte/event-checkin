@@ -417,13 +417,15 @@
   });
 
   function applySettings() {
-    document.getElementById('event-title-display').textContent = settings.title;
-    document.getElementById('event-sub-display').textContent = settings.sub;
-    document.getElementById('event-name-small').textContent = settings.title;
+    const title = settings.title || 'Event Check-in 🎉';
+    const sub = settings.sub || 'Enter your NVIDIA email to verify your access.';
+    document.getElementById('event-title-display').textContent = title;
+    document.getElementById('event-sub-display').textContent = sub;
+    document.getElementById('event-name-small').textContent = title;
     const ti = document.getElementById('event-title-input');
     const si = document.getElementById('event-sub-input');
-    if (ti && document.activeElement !== ti) ti.value = settings.title;
-    if (si && document.activeElement !== si) si.value = settings.sub;
+    if (ti && document.activeElement !== ti) ti.value = title;
+    if (si && document.activeElement !== si) si.value = sub;
   }
 
   let settingsTimer;
@@ -431,7 +433,7 @@
     clearTimeout(settingsTimer);
     settingsTimer = setTimeout(async () => {
       settings.title = document.getElementById('event-title-input').value || 'Event Check-in 🎉';
-      settings.sub = document.getElementById('event-sub-input').value || '';
+      settings.sub = document.getElementById('event-sub-input').value || 'Enter your NVIDIA email to verify your access.';
       applySettings();
       await setDoc(settingsRef, settings, { merge: true });
     }, 600);
