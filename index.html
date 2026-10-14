@@ -95,6 +95,8 @@
     .row-inputs input, .row-inputs select { flex: 1; }
     .remove-btn { padding: 2px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: transparent; font-size: 12px; cursor: pointer; color: var(--danger); font-family: inherit; }
     .remove-btn:hover { background: var(--danger-bg); }
+    .approve-btn { padding: 2px 8px; border: 1px solid var(--nv-green); border-radius: var(--radius); background: var(--nv-green-light); font-size: 12px; cursor: pointer; color: var(--nv-green-dark); font-family: inherit; font-weight: 600; }
+    .approve-btn:hover { background: var(--nv-green); color: white; }
     .empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
     .pw-wrap { position: relative; }
     .pw-wrap input { padding-right: 44px; }
@@ -119,15 +121,15 @@
     .feedback { font-size: 13px; color: var(--nv-green-dark); min-height: 20px; text-align: right; margin-top: 6px; }
 
     /* Full screen color states */
-    body.screen-approved { background: #76b900 !important; }
-    body.screen-approved .tab-bar { background: #5a8c00; border-color: #4a7500; }
-    body.screen-approved .tab { color: rgba(255,255,255,0.7); }
-    body.screen-approved .tab.active { color: white; border-bottom-color: white; }
-    body.screen-pending { background: #fbbf24 !important; }
-    body.screen-pending .tab-bar { background: #f59e0b; border-color: #d97706; }
-    body.screen-pending .tab { color: rgba(0,0,0,0.6); }
-    body.screen-pending .tab.active { color: #1a1a1a; border-bottom-color: #1a1a1a; }
-    body.screen-approved .result, body.screen-pending .result { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    body.screen-approved { background: #d4edaa !important; }
+    body.screen-approved .tab-bar { background: #c2e48a; border-color: #afd970; }
+    body.screen-approved .tab { color: rgba(0,0,0,0.5); }
+    body.screen-approved .tab.active { color: #3a5c00; border-bottom-color: #3a5c00; }
+    body.screen-pending { background: #fef3c7 !important; }
+    body.screen-pending .tab-bar { background: #fde68a; border-color: #fcd34d; }
+    body.screen-pending .tab { color: rgba(0,0,0,0.5); }
+    body.screen-pending .tab.active { color: #92400e; border-bottom-color: #92400e; }
+    body.screen-approved .result, body.screen-pending .result { box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
 
     /* Email input error state */
     input.input-error { border-color: var(--danger) !important; box-shadow: 0 0 0 3px rgba(220,38,38,0.12) !important; }
@@ -657,6 +659,36 @@
 
   window.removeGuest = async (email) => { await deleteDoc(doc(db, 'guests', email)); };
 
+  window.approveFromTable = async (email, existingType) => {
+    const ts = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (existingType && existingType !== '—') {
+      // Already on guest list with a known type — approve directly
+      await setDoc(doc(db, 'guests', email), { email, type: existingType, addedAt: new Date().toISOString() });
+      await setDoc(doc(db, 'checkins', email), { approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, photoReleaseAnswered: false, type: existingType }, { merge: true });
+      toast(`✅ Approved ${email} as ${existingType === 'ncg' ? 'NCG' : 'Intern'}`);
+    } else {
+      // Not on guest list — ask for type first
+      openModal(
+        '✅ Approve attendee',
+        `${email} isn't on the guest list. Select their type to approve them.`,
+        `<div style="margin-top:4px;">
+          <label>Attendee type</label>
+          <select id="approve-type" style="margin-top:6px;">
+            <option value="intern">🎓 Intern</option>
+            <option value="ncg">🆕 NCG</option>
+          </select>
+        </div>`,
+        async () => {
+          const typeEl = document.getElementById('approve-type');
+          const type = typeEl.options[typeEl.selectedIndex].value;
+          await setDoc(doc(db, 'guests', email), { email, type, addedAt: new Date().toISOString() });
+          await setDoc(doc(db, 'checkins', email), { approved: true, time: ts, timestamp: new Date().toISOString(), photoRelease: false, photoReleaseAnswered: false, type }, { merge: true });
+          toast(`✅ Approved ${email} as ${type === 'ncg' ? 'NCG' : 'Intern'}`);
+        }
+      );
+    }
+  };
+
   window.setFilter = (f) => {
     currentFilter = f;
     ['all','in','pending','denied','intern','ncg'].forEach(id => {
@@ -731,15 +763,20 @@
       return `<span style="color:var(--text-muted); font-size:12px;">—</span>`;
     };
 
-    tbody.innerHTML = rows.map(r => `
+    tbody.innerHTML = rows.map(r => {
+      const actionBtn = r.status === 'denied'
+        ? `<button class="approve-btn" onclick="approveFromTable('${r.email}','${r.type}')">✅ Approve</button>`
+        : (r.canRemove ? `<button class="remove-btn" onclick="removeGuest('${r.email}')">Remove</button>` : '');
+      return `
       <tr>
         <td style="font-family:monospace; font-size:12px;">${r.email}</td>
         <td>${typeBadge(r.type)}</td>
         <td>${badge(r.status)}</td>
         <td style="color:var(--text-secondary); font-size:12px;">${r.time || '—'}</td>
         <td style="text-align:center;">${r.photoRelease ? '📸 ✅' : '—'}</td>
-        <td>${r.canRemove ? `<button class="remove-btn" onclick="removeGuest('${r.email}')">Remove</button>` : ''}</td>
-      </tr>`).join('');
+        <td>${actionBtn}</td>
+      </tr>`;
+    }).join('');
   }
 
   window.exportCSV = () => {
